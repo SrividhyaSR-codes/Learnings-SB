@@ -2,6 +2,7 @@ package com.dailyroutines.service;
 
 import com.dailyroutines.dto.RoutineDTO;
 import com.dailyroutines.entity.Routine;
+import com.dailyroutines.exception.ResourceNotFoundException;
 import com.dailyroutines.repository.RoutineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class RoutineService {
      */
     public RoutineDTO getRoutineById(Long id) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Routine not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
         return convertToDTO(routine);
     }
 
@@ -51,7 +52,7 @@ public class RoutineService {
      */
     public RoutineDTO updateRoutine(Long id, RoutineDTO routineDTO) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Routine not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
         
         if (routineDTO.getTitle() != null) {
             routine.setTitle(routineDTO.getTitle());
@@ -82,7 +83,7 @@ public class RoutineService {
      */
     public void deleteRoutine(Long id) {
         if (!routineRepository.existsById(id)) {
-            throw new RuntimeException("Routine not found with id: " + id);
+            throw new ResourceNotFoundException("Routine not found with id: " + id);
         }
         routineRepository.deleteById(id);
     }
@@ -142,7 +143,7 @@ public class RoutineService {
      */
     public RoutineDTO markAsCompleted(Long id) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Routine not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
         routine.setCompleted(true);
         routine.setUpdatedAt(LocalDateTime.now());
         Routine updatedRoutine = routineRepository.save(routine);
